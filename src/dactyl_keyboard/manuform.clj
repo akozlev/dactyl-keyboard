@@ -320,7 +320,7 @@
         x-rotation      (thumb-tenting c 10 :configuration-custom-thumb-tenting-x)
         y-rotation      (thumb-tenting c -23 :configuration-custom-thumb-tenting-y)
         z-rotation      (thumb-tenting c (case thumb-count :three 20 :five 25 10) :configuration-custom-thumb-tenting-z)
-        movement        (case thumb-count :five [-35 -16 -2] [-35 -15 -2])]
+        movement        (case thumb-count :five [-35 -16 -2] [-34 -16 -2])]
     (->> shape
       (rotate x-rotation [1 0 0])
       (rotate y-rotation [0 1 0])
@@ -354,10 +354,10 @@
 
 (defn thumb-ml-place [c shape]
   (let [thumb-count (get c :configuration-thumb-count)
-        x-rotation (thumb-tenting c 6 :configuration-custom-thumb-tenting-x)
+        x-rotation (thumb-tenting c 0 :configuration-custom-thumb-tenting-x)
         y-rotation (thumb-tenting c -34 :configuration-custom-thumb-tenting-y)
-        z-rotation (thumb-tenting c 40 :configuration-custom-thumb-tenting-z)
-        movement    (if (= thumb-count :three) [-53 -26 -12] [-52 -26 -12])]
+        z-rotation (thumb-tenting c 38 :configuration-custom-thumb-tenting-z)
+        movement    (if (= thumb-count :three) [-53 -26 -12] [-52 -23 -12])]
     (->> shape
          (rotate x-rotation [1 0 0])
          (rotate y-rotation [0 1 0])
@@ -367,10 +367,10 @@
 
 (defn thumb-mr-place [c shape]
   (let [thumb-count (get c :configuration-thumb-count)
-        x-rotation (thumb-tenting c (if (= thumb-count :five) 10 -6) :configuration-custom-thumb-tenting-x)
+        x-rotation (thumb-tenting c (if (= thumb-count :five) 10 6) :configuration-custom-thumb-tenting-x)
         y-rotation (thumb-tenting c (if (= thumb-count :five) -23 -34) :configuration-custom-thumb-tenting-y)
-        z-rotation (thumb-tenting c (if (= thumb-count :five) 25 48) :configuration-custom-thumb-tenting-z)
-        movement    (if (= thumb-count :five) [-23 -34 -6] [-29 -41 -13])]
+        z-rotation (thumb-tenting c (if (= thumb-count :five) 25 28) :configuration-custom-thumb-tenting-z)
+        movement    (if (= thumb-count :five) [-23 -34 -6] [-26 -38 -11])]
     (->> shape
          (rotate x-rotation [1 0 0])
          (rotate y-rotation [0 1 0])
@@ -383,7 +383,7 @@
         x-rotation (thumb-tenting c (if (= thumb-count :five) 6 -4) :configuration-custom-thumb-tenting-x)
         y-rotation (thumb-tenting c (if (= thumb-count :five) -32 -35) :configuration-custom-thumb-tenting-y)
         z-rotation (thumb-tenting c (if (= thumb-count :five) 35 52) :configuration-custom-thumb-tenting-z)
-        movement    (if (= thumb-count :five) [-51 -25 -11.5] [-56.3 -43.3 -23.5])]
+        movement    (if (= thumb-count :five) [-51 -25 -11.5] [-56.3 -42.3 -23.5])]
     (->> shape
          (rotate x-rotation [1 0 0])
          (rotate y-rotation [0 1 0])
@@ -396,7 +396,7 @@
         x-rotation (thumb-tenting c (if (= thumb-count :five) 6 -16) :configuration-custom-thumb-tenting-x)
         y-rotation (thumb-tenting c (if (= thumb-count :five) -34 -33) :configuration-custom-thumb-tenting-y)
         z-rotation (thumb-tenting c (if (= thumb-count :five) 35 54) :configuration-custom-thumb-tenting-z)
-        movement    (if (= thumb-count :five) [-39 -43 -16] [-37.8 -55.3 -25.3])]
+        movement    (if (= thumb-count :five) [-39 -43 -16] [-35.8 -55.3 -25.3])]
     (->> shape
          (rotate x-rotation [1 0 0])
          (rotate y-rotation [0 1 0])
@@ -417,6 +417,7 @@
                    (thumb-br-place c shape)
                    (thumb-bl-place c shape))
       (union (thumb-ml-place c shape)
+             (thumb-tl-place c shape)
              (thumb-mr-place c shape)
              (thumb-br-place c shape)
              (thumb-bl-place c shape)))))
@@ -428,13 +429,13 @@
                     (thumb-tl-place c shape)
                     (thumb-ml-place c shape))
       :five ()
-      (union (thumb-tr-place c shape)
-             (thumb-tl-place c shape)))))
+      (thumb-tr-place c shape)
+             )))
 
 (def larger-plate
   (let [plate-height (/ (- sa-double-length mount-height) 3)
-        top-plate    (->> (cube mount-width plate-height web-thickness)
-                          (translate [0
+        top-plate    (->> (cube (+ mount-width 0.4) (- plate-height 0.2) web-thickness)
+                          (translate [0.2
                                       (/ (+ plate-height mount-height -0.20) 2)
                                       (- plate-thickness (/ web-thickness 2))]))]
     (union top-plate (mirror [0 1 0] top-plate))))
@@ -451,15 +452,13 @@
    (thumb-15x-layout c larger-plate)))
 
 (def thumb-post-tr
-  (translate [(- (/ mount-width 2) post-adj)
-              (- (/ mount-height  1.15) post-adj)
-              0] web-post))
+  (translate [(- (/ mount-width 2) post-adj -0.4) (- (/ mount-height  1.15) post-adj) 0] web-post))
 (def thumb-post-tl
   (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height  1.15) post-adj) 0] web-post))
 (def thumb-post-bl
   (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -1.15) post-adj) 0] web-post))
 (def thumb-post-br
-  (translate [(- (/ mount-width 2) post-adj)  (+ (/ mount-height -1.15) post-adj) 0] web-post))
+  (translate [(- (/ mount-width 2) post-adj -0.4)  (+ (/ mount-height -1.15) post-adj) 0] web-post))
 
 (defn thumb-connector-two [c]
   (let [row-count (get c :configuration-last-row-count)
@@ -674,31 +673,36 @@
   (let [row-count (get c :configuration-last-row-count)
         lastrow   (flastrow (get c :configuration-nrows))
         cornerrow (fcornerrow (get c :configuration-nrows))]
-    (union (triangle-hulls
-            (thumb-tl-place c thumb-post-tr)
-            (thumb-tl-place c thumb-post-br)
+    (union 
+           (triangle-hulls
+            (thumb-tl-place c web-post-tr)
+            (thumb-tl-place c web-post-br)
             (thumb-tr-place c thumb-post-tl)
             (thumb-tr-place c thumb-post-bl))
            (triangle-hulls
-            (thumb-ml-place c web-post-tr)
             (thumb-tl-place c thumb-post-tl)
+            (thumb-ml-place c web-post-tr)
+            (thumb-tl-place c web-post-tl)
             (thumb-ml-place c web-post-br)
-            (thumb-tl-place c thumb-post-bl)
-            (thumb-ml-place c web-post-bl)
-            (thumb-mr-place c web-post-tl))
+            (thumb-tl-place c web-post-bl))
            (triangle-hulls
             (thumb-mr-place c web-post-tl)
-            (thumb-tl-place c thumb-post-bl)
+            (thumb-tl-place c web-post-bl)
             (thumb-mr-place c web-post-tr)
-            (thumb-tl-place c thumb-post-br)
+            (thumb-tl-place c web-post-br)
             (thumb-mr-place c web-post-br)
             (thumb-tr-place c thumb-post-bl)
             (thumb-tr-place c thumb-post-br))
            (triangle-hulls
             (thumb-ml-place c web-post-tl)
             (thumb-bl-place c web-post-tr)
-            (thumb-bl-place c web-post-br)
-            (thumb-ml-place c web-post-bl))
+            (thumb-ml-place c web-post-bl)
+            (thumb-bl-place c web-post-br))
+           ;; special wall
+           (triangle-hulls
+            (thumb-br-place c web-post-br)
+            (thumb-mr-place c web-post-br)
+            (thumb-mr-place c web-post-bl))
            (triangle-hulls
             (thumb-br-place c web-post-tr)
             (thumb-mr-place c web-post-tl)
@@ -711,22 +715,25 @@
             (thumb-bl-place c web-post-br)
             (thumb-mr-place c web-post-tl)
             (thumb-ml-place c web-post-bl)
-            (thumb-mr-place c web-post-tr)
-            (thumb-ml-place c web-post-br))
+            (thumb-tl-place c web-post-bl)
+            (thumb-ml-place c web-post-br)
+            )
            (triangle-hulls    ; top two to the main keyboard, starting on the left
+            (thumb-tl-place c web-post-tl)
             (thumb-tl-place c thumb-post-tl)
+            (thumb-tl-place c web-post-tr)
             ;; (key-place c 0 cornerrow web-post-bl)
             (if (not= :innie (get c :configuration-inner-column))
               (key-place c 0 cornerrow web-post-bl)
               ())
-            (thumb-tl-place c thumb-post-tr)
-            (key-place c 0 cornerrow web-post-br)
             (thumb-tr-place c thumb-post-tl)
-            (key-place c 1 cornerrow web-post-bl)
+            (key-place c 0 cornerrow web-post-br)
             (thumb-tr-place c thumb-post-tr)
+            (key-place c 1 cornerrow web-post-bl)
             (key-place c 1 cornerrow web-post-br)
+            (thumb-tr-place c thumb-post-tr)
+            (key-place c 2 lastrow web-post-tl)
             (thumb-tr-place c thumb-post-br)
-            (key-place c 2 cornerrow web-post-bl)
             (case row-count
               :zero ()
               (key-place c 2 lastrow web-post-bl))
@@ -740,7 +747,8 @@
             (key-place c 2 cornerrow web-post-bl)
             (key-place c 2 lastrow web-post-tr)
             (key-place c 2 cornerrow web-post-br)
-            (key-place c 3 cornerrow web-post-bl)))))
+            (key-place c 3 cornerrow web-post-bl))
+           )))
 
 (defn thumb-connectors [c]
   (let [thumb-count (get c :configuration-thumb-count)]
@@ -900,8 +908,8 @@
               (partial-place y        1 web-post)
               (partial-place (dec y) -1 web-post))))
      (wall-brace (partial key-place c init 0) 0 1 web-post-tl
-                 (partial partial-place 0 1)  0 1 web-post)
-     (wall-brace (partial partial-place 0 1)  0 1 web-post
+                 (partial partial-place 0 1)  0 2.2 web-post)
+     (wall-brace (partial partial-place 0 1)  0 2.2 web-post
                  (partial partial-place 0 1) -1 0 web-post))))
 
 (defn front-wall [c]
@@ -1042,8 +1050,6 @@
   (union (wall-brace (partial thumb-tr-place c)  0 -1 thumb-post-br
                      (partial thumb-mr-place c)  0 -1 web-post-br)
          (wall-brace (partial thumb-mr-place c)  0 -1 web-post-br
-                     (partial thumb-mr-place c)  0 -1 web-post-bl)
-         (wall-brace (partial thumb-mr-place c)  0 -1 web-post-bl
                      (partial thumb-br-place c)  0 -1 web-post-br)
          (wall-brace (partial thumb-br-place c)  0 -1 web-post-br
                      (partial thumb-br-place c)  0 -1 web-post-bl)
@@ -1135,15 +1141,9 @@
       (thumb-tl-place c thumb-post-tl))
      (hull
       (inner-placement c innerrow -1 web-post)
-      (inner-placement c innerrow -1 (translate (wall-locate1 -1 0) web-post))
+      (inner-placement c innerrow -1 (translate (wall-locate1 0 0) web-post))
       (key-place c init innerrow web-post-bl)
-      (key-place c init innerrow (translate (wall-locate1 -1 0) web-post-bl))
-      (thumb-tl-place c thumb-post-tl))
-     (hull
-      (inner-placement c innerrow -1 web-post)
-      (inner-placement c innerrow -1 (translate (wall-locate1 -1 0) web-post))
-      (key-place c init innerrow web-post-bl)
-      (key-place c init innerrow (translate (wall-locate1 -1 0) web-post-bl))
+      (key-place c init innerrow (translate (wall-locate1 0 0) web-post-bl))
       (thumb-tl-place c thumb-post-tl))
      (case inner
        :outie (triangle-hulls
@@ -1312,7 +1312,7 @@
     2 -7
     3 -5
     4 -3.5
-    5 0
+    5 1.4
     6 2.2
     5))
 
@@ -1322,7 +1322,7 @@
 (defn external-holder-position [c]
   (map + [(+ 18.8 (external-holder-offset c)) 18.7 1.3] [(first (external-holder-ref c)) (second (external-holder-ref c)) 2]))
 (def external-holder-cube
-  (cube 29.166 30 12.6))
+  (cube 28.466 30 12.6))
 (defn external-holder-space [c]
   (translate (map + (external-holder-position c) [-1.5 (* -1 wall-thickness) 3]) external-holder-cube))
 
@@ -1445,20 +1445,20 @@
         :configuration-ncols                  6
         :configuration-thumb-count            :six
         :configuration-last-row-count         :two
-        :configuration-switch-type            :box
+        :configuration-switch-type            :kailh
         :configuration-inner-column           :normie
         :configuration-hide-last-pinky?       false
 
-        :configuration-alpha                  (/ pi 10)
-        :configuration-pinky-alpha            (/ pi 10)
-        :configuration-beta                   (/ pi 36)
+        :configuration-alpha                  (/ pi 9)
+        :configuration-pinky-alpha            (/ pi 9)
+        :configuration-beta                   (/ pi 26)
         :configuration-centercol              4
         :configuration-tenting-angle          (/ pi 12)
         :configuration-rotate-x-angle         (/ pi 180)
 
         :configuration-use-promicro-usb-hole? false
         :configuration-use-trrs?              false
-        :configuration-use-external-holder?   false
+        :configuration-use-external-holder?   true
 
         :configuration-use-hotswap?           false
         :configuration-thumb-cluster-offset-x 6
@@ -1474,18 +1474,18 @@
         :configuration-thumb-top-right-offset-z 3
         :configuration-stagger?               true
         :configuration-stagger-index          [0 0 0]
-        :configuration-stagger-middle         [0 2.8 -6.5]
+        :configuration-stagger-middle         [0 2.8 -2.5]
         :configuration-stagger-ring           [0 0 0]
-        :configuration-stagger-pinky          [0 -13 6]
+        :configuration-stagger-pinky          [0 -13 2]
         :configuration-use-wide-pinky?        false
         :configuration-z-offset               8
         :configuration-use-wire-post?         false
-        :configuration-use-screw-inserts?     false
+        :configuration-use-screw-inserts?     true
 
         :configuration-show-caps?             false
         :configuration-plate-projection?      false})
 
-#_(spit "things/right.scad"
+(spit "things/right.scad"
       (write-scad (model-right c)))
 
 #_(spit "things/right-plate.scad"
@@ -1504,6 +1504,9 @@
 #_(spit "things/left.scad"
         (write-scad (mirror [-1 0 0] model-right)))
 
+#_(spit "things/left-plate.scad"
+        (write-scad (plate-left c)))
+        
 #_(spit "things/right-test.scad"
         (write-scad
          (union

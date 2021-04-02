@@ -8,7 +8,7 @@
 
 (def extra-width
   "extra width between two keys in a row."
-  2.5)
+  3.5)
 (def extra-height
   "extra height between two keys in a column."
   1.0)
@@ -239,7 +239,7 @@
         is-right?        (get c :is-right?)
         plate-projection?   (get c :configuration-plate-projection? false)
         fill-in             (translate [0 0 (/ plate-thickness 2)] (cube alps-width alps-height plate-thickness))
-        holder-thickness    1.65
+        holder-thickness    (+ 1.65 0.5)
         top-wall            (case switch-type
                               :alps (->> (cube (+ keyswitch-width 3) 2.7 plate-thickness)
                                          (translate [0
@@ -267,7 +267,7 @@
                                          (translate [(+ (/ holder-thickness 2) (/ keyswitch-width 2))
                                                      0
                                                      (* plate-thickness 0.7)]))
-                              (->> (cube holder-thickness (+ keyswitch-height 3.3) plate-thickness)
+                              (->> (cube holder-thickness (+ keyswitch-height 3.3 1) plate-thickness)
                                    (translate [(+ (/ holder-thickness 2) (/ keyswitch-width 2))
                                                0
                                                (/ plate-thickness 2)])))
@@ -400,10 +400,10 @@
                           plate-thickness)])))
 
 (def post-adj (/ post-size 2))
-(def web-post-tr (translate [(- (/ mount-width 2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
-(def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
-(def web-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
-(def web-post-br (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+(def web-post-tr (translate [(- (/ mount-width 2) post-adj -0.5) (- (/ mount-height 2) post-adj -0.5) 0] web-post))
+(def web-post-tl (translate [(+ (/ mount-width -2) post-adj -0.5) (- (/ mount-height 2) post-adj -0.5) 0] web-post))
+(def web-post-bl (translate [(+ (/ mount-width -2) post-adj -0.5) (+ (/ mount-height -2) post-adj -0.5) 0] web-post))
+(def web-post-br (translate [(- (/ mount-width 2) post-adj -0.5) (+ (/ mount-height -2) post-adj -0.5) 0] web-post))
 
 ; length of the first downward-sloping part of the wall (negative)
 (def wall-z-offset -15)
